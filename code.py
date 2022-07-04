@@ -39,20 +39,20 @@ class Window(QWidget):
 
         #create open button
         openBtn1 = QPushButton('Open Video')
-        openBtn1.clicked.connect(self.open_file1)
-        openBtn2 = QPushButton('Open Video')
-        openBtn2.clicked.connect(self.open_file2)
+        openBtn1.clicked.connect(lambda: self.open_file(self.mediaPlayer1, self.playBtn1))
+        #openBtn2 = QPushButton('Open Video')
+        #openBtn2.clicked.connect(lambda: self.open_file(self.mediaPlayer2, self.playBtn2))
 
 
         #create button for playing
         self.playBtn1 = QPushButton()
         self.playBtn1.setEnabled(False)
         self.playBtn1.setIcon(self.style().standardIcon(QStyle.SP_MediaPlay))
-        self.playBtn1.clicked.connect(self.play_video1)
+        self.playBtn1.clicked.connect(lambda: self.play_video(self.mediaPlayer1))
         self.playBtn2 = QPushButton()
         self.playBtn2.setEnabled(False)
         self.playBtn2.setIcon(self.style().standardIcon(QStyle.SP_MediaPlay))
-        self.playBtn2.clicked.connect(self.play_video2)
+        self.playBtn2.clicked.connect(lambda: self.play_video(self.mediaPlayer2))
 
 
 
@@ -71,11 +71,11 @@ class Window(QWidget):
         self.label1.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Maximum)
         self.label2 = QLabel()
         self.label2.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Maximum)
-
+        self.filename = ''
 
         #create hbox layout
         hboxLayout1 = QHBoxLayout()
-        hboxLayout1.setContentsMargins(0,0,0,0)
+        hboxLayout1.setContentsMargins(0, 0, 0, 0)
         hboxLayout2 = QHBoxLayout()
         hboxLayout2.setContentsMargins(0, 0, 0, 0)
 
@@ -83,7 +83,7 @@ class Window(QWidget):
         hboxLayout1.addWidget(openBtn1)
         hboxLayout1.addWidget(self.playBtn1)
         hboxLayout1.addWidget(self.slider1)
-        hboxLayout2.addWidget(openBtn2)
+        #hboxLayout2.addWidget(openBtn2)
         hboxLayout2.addWidget(self.playBtn2)
         hboxLayout2.addWidget(self.slider2)
 
@@ -99,8 +99,16 @@ class Window(QWidget):
         vboxLayout2.addLayout(hboxLayout2)
         vboxLayout2.addWidget(self.label2)
 
-        newLayout = QHBoxLayout()
+        newLayout = QVBoxLayout()
         newLayout.addLayout(vboxLayout1)
+
+        self.bigBtn = QPushButton()
+        self.bigBtn.setText('TO DO SmThing with videofile')
+        self.bigBtn.setEnabled(False)
+        self.bigBtn.clicked.connect(self.do_smthing_with_videofile)
+
+        newLayout.addWidget(self.bigBtn)
+
         newLayout.addLayout(vboxLayout2)
 
         self.setLayout(newLayout)
@@ -111,59 +119,35 @@ class Window(QWidget):
 
         #media player signals
 
-        self.mediaPlayer1.stateChanged.connect(self.mediastate_changed1)
+        self.mediaPlayer1.stateChanged.connect(lambda: self.mediastate_changed(self.mediaPlayer1, self.playBtn1))
         self.mediaPlayer1.positionChanged.connect(self.position_changed1)
         self.mediaPlayer1.durationChanged.connect(self.duration_changed1)
-        self.mediaPlayer2.stateChanged.connect(self.mediastate_changed2)
+        self.mediaPlayer2.stateChanged.connect(lambda: self.mediastate_changed(self.mediaPlayer2, self.playBtn2))
         self.mediaPlayer2.positionChanged.connect(self.position_changed2)
         self.mediaPlayer2.durationChanged.connect(self.duration_changed2)
 
-    def open_file1(self):
-        filename, _ = QFileDialog.getOpenFileName(self, "Open Video")
+    def open_file(self, player, btn):
+        self.filename, _ = QFileDialog.getOpenFileName(self, "Open Video")
 
-        if filename != '':
-            self.mediaPlayer1.setMedia(QMediaContent(QUrl.fromLocalFile(filename)))
-            self.playBtn1.setEnabled(True)
-    def open_file2(self):
-        filename, _ = QFileDialog.getOpenFileName(self, "Open Video")
-
-        if filename != '':
-            self.mediaPlayer2.setMedia(QMediaContent(QUrl.fromLocalFile(filename)))
-            self.playBtn2.setEnabled(True)
-
-
-    def play_video1(self):
-        if self.mediaPlayer1.state() == QMediaPlayer.PlayingState:
-            self.mediaPlayer1.pause()
+        if self.filename != '':
+            player.setMedia(QMediaContent(QUrl.fromLocalFile(self.filename)))
+            btn.setEnabled(True)
+            self.bigBtn.setEnabled(True)
+    def play_video(self, player):
+        if player.state() == QMediaPlayer.PlayingState:
+            player.pause()
 
         else:
-            self.mediaPlayer1.play()
-    def play_video2(self):
-        if self.mediaPlayer2.state() == QMediaPlayer.PlayingState:
-            self.mediaPlayer2.pause()
+            player.play()
 
-        else:
-            self.mediaPlayer2.play()
-
-    def mediastate_changed1(self, state):
-        if self.mediaPlayer1.state() == QMediaPlayer.PlayingState:
-            self.playBtn1.setIcon(
+    def mediastate_changed(self, player, btn):
+        if player.state() == QMediaPlayer.PlayingState:
+            btn.setIcon(
                 self.style().standardIcon(QStyle.SP_MediaPause)
 
             )
         else:
-            self.playBtn1.setIcon(
-                self.style().standardIcon(QStyle.SP_MediaPlay)
-
-            )
-    def mediastate_changed2(self, state):
-        if self.mediaPlayer2.state() == QMediaPlayer.PlayingState:
-            self.playBtn2.setIcon(
-                self.style().standardIcon(QStyle.SP_MediaPause)
-
-            )
-        else:
-            self.playBtn2.setIcon(
+            btn.setIcon(
                 self.style().standardIcon(QStyle.SP_MediaPlay)
 
             )
@@ -192,6 +176,9 @@ class Window(QWidget):
         self.playBtn2.setEnabled(False)
         self.label2.setText("Error: " + self.mediaPlayer2.errorString())
 
+    def do_smthing_with_videofile(self):
+        self.mediaPlayer2.setMedia(QMediaContent(QUrl.fromLocalFile(self.filename)))
+        self.playBtn2.setEnabled(True)
 
 
 
