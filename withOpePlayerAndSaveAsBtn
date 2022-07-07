@@ -5,7 +5,8 @@ from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
 from PyQt5.QtMultimediaWidgets import QVideoWidget
 from PyQt5.QtGui import QIcon, QPalette
 from PyQt5.QtCore import Qt, QUrl
-import shutil
+#import shutil
+#import startup.py
 
 
 
@@ -81,24 +82,50 @@ class Window(QWidget):
         self.BtnsLayout = QVBoxLayout()
 
 
+
         # OpenBtn
         self.openBtn = QPushButton('Open Video')
         self.openBtn.clicked.connect(self.open_file)
-        
+
         self.hboxLayout = QHBoxLayout()
         self.hboxLayout.setContentsMargins(0, 0, 0, 0)
 
         self.BtnsLayout.addWidget(self.openBtn)
+
+        self.openlabel = QLabel()
+        self.openlabel.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Maximum)
+        self.BtnsLayout.addWidget(self.openlabel)
+        self.openlabel.setText('')
+
+        self.openlabel.setStyleSheet('''
+            color: white;
+        ''')
 
         # selectFolder
         self.selectFolder = QPushButton('Select folder')
         self.selectFolder.clicked.connect(self.select_folder)
         self.BtnsLayout.addWidget(self.selectFolder)
 
+        self.folderlabel = QLabel()
+        self.folderlabel.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Maximum)
+        self.BtnsLayout.addWidget(self.folderlabel)
+        self.folderlabel.setText('')
+        self.folderlabel.setStyleSheet('''
+                    color: white;
+                ''')
+
         # selectMask
         self.selectMask = QPushButton('Select mask folder')
         self.selectMask.clicked.connect(self.select_mask)
         self.BtnsLayout.addWidget(self.selectMask)
+
+        self.masklabel = QLabel()
+        self.masklabel.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Maximum)
+        self.BtnsLayout.addWidget(self.masklabel)
+        self.masklabel.setText('')
+        self.masklabel.setStyleSheet('''
+                    color: white;
+                ''')
 
         # create save button
         self.saveBtn = QPushButton('Save Video as')
@@ -122,18 +149,43 @@ class Window(QWidget):
     def open_file(self):
         self.filenameOpened, _ = QFileDialog.getOpenFileName(self, "Open Video")
         if self.filenameOpened != '':
+            self.openlabel.setText(self.filenameOpened)
+            self.folderlabel.setText('')
+            self.filenameFolder = ''
             self.mediaPlayer.setMedia(QMediaContent(QUrl.fromLocalFile(self.filenameOpened)))
             self.playBtn.setEnabled(True)
 
     def save_file(self):
-        self.filenameSaved, _ = QFileDialog.getSaveFileName(self, "Open Video")
+        self.filenameSaved, _ = QFileDialog.getSaveFileName(self, "Save Video")
 
-        if self.filenameOpened != '' and self.filenameSaved != '':
-            shutil.copy2(self.filenameOpened, self.filenameSaved)
-            self.mediaPlayer.setMedia(QMediaContent(QUrl.fromLocalFile(self.filenameOpened)))
+        if self.filenameOpened != '' and self.filenameSaved != '' and self.filenameMask != '':
+            #shutil.copy2(self.filenameOpened, self.filenameSaved)
+            #new:
+            ## process_video('/'.join(self.filenameOpened.split('/')[:-1]), self.filenameMask, self.filenameSaved, self.filenameOpened.split('/')[-1])
+            self.mediaPlayer.setMedia(QMediaContent(QUrl.fromLocalFile(self.filenameSaved)))
             self.filenameOpened = ''
             self.filenameFolder = ''
             self.filenameMask = ''
+            self.filenameSaved = ''
+
+            self.masklabel.setText('')
+            self.openlabel.setText('')
+
+            self.playBtn.setEnabled(True)
+        elif self.filenameFolder != '' and self.filenameSaved != '' and self.filenameMask != '':
+            #shutil.copy2(self.filenameOpened, self.filenameSaved)
+            #new:
+            ## process_video(self.filenameFolder, self.filenameMask, self.filenameSaved)
+            self.mediaPlayer.setMedia(QMediaContent(QUrl.fromLocalFile(self.filenameSaved)))
+            self.filenameOpened = ''
+            self.filenameFolder = ''
+            self.filenameMask = ''
+            self.filenameSaved = ''
+
+            self.masklabel.setText('')
+            self.folderlabel.setText('')
+
+            self.playBtn.setEnabled(True)
 
 
     def play_video(self):
@@ -175,11 +227,16 @@ class Window(QWidget):
 
     def select_folder(self):
         self.filenameFolder = QFileDialog.getExistingDirectory(self, "Select folder")
-        print(str(self.filenameFolder))
+        if self.filenameFolder != '':
+            self.filenameOpened = ''
+            self.openlabel.setText('')
+            self.folderlabel.setText(self.filenameFolder)
+        self.filenameOpened = ''
 
     def select_mask(self):
         self.filenameMask = QFileDialog.getExistingDirectory(self, "Select mask")
-        print(str(self.filenameMask))
+        if self.filenameMask != '':
+            self.masklabel.setText(self.filenameMask)
 
 
 
