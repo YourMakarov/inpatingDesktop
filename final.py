@@ -170,7 +170,7 @@ class Window(QWidget):
         self.BtnsLayout.addLayout(self.maskLayout)
 ##
         self.saveLayout = QHBoxLayout()
-        self.saveBtn = QPushButton('Save file as')
+        self.saveBtn = QPushButton('Select folder for result file')
         self.saveBtn.setFixedSize(160, 60)
         self.saveBtn.setMinimumSize(70, 40)
         self.saveBtn.setStyleSheet(
@@ -226,7 +226,7 @@ class Window(QWidget):
             # shutil.copy2(self.filenameOpened, self.filenameSaved)
             # new:
             ## process_video(self.filenameFolder, self.filenameMask, self.filenameFolderSaved)
-            #self.mediaPlayer.setMedia(QMediaContent(QUrl.fromLocalFile(self.filenameFolderSaved)))
+
             self.filenameOpened = ''
             self.filenameFolder = ''
             self.filenameMask = ''
