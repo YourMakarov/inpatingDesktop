@@ -102,7 +102,7 @@ class Window(QWidget):
 
         # OpenBtn
         self.openLayout = QHBoxLayout()
-        self.openBtn = QPushButton('Open Video')
+        self.openBtn = QPushButton('Video .mp4')
         self.openBtn.setFixedSize(160, 60)
         self.openBtn.setMinimumSize(70, 40)
         self.openBtn.setStyleSheet("QPushButton {background-color: #D3D3D3; color: black; border-radius: 20px;  border: 2px groove gray;font: 10pt 'Source Sans Pro';border-style: circle;}" "QPushButton:pressed {background-color:rgb(119, 136, 153);}")
@@ -130,7 +130,7 @@ class Window(QWidget):
 
         # selectFolder
         self.folderLayout = QHBoxLayout()
-        self.selectFolder = QPushButton('Select folder with splited frames (instead of .mp4)')
+        self.selectFolder = QPushButton('Folder with splited frames')
         self.selectFolder.setFixedSize(160, 60)
         self.selectFolder.setMinimumSize(70, 40)
         self.selectFolder.setStyleSheet(
