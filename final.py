@@ -206,8 +206,8 @@ class Window(QWidget):
             self.playBtn.setEnabled(True)
 
     def save_file(self):
-        self.filenameFolder = QFileDialog.getExistingDirectory(self, "Select folder with result")
-
+        self.filenameFolderSaved = QFileDialog.getExistingDirectory(self, "Select folder with result")
+        print(self.filenameFolderSaved)
         if self.filenameOpened != '' and self.filenameFolderSaved != '' and self.filenameMask != '':
             # shutil.copy2(self.filenameOpened, self.filenameSaved)
             # new:
@@ -236,6 +236,8 @@ class Window(QWidget):
             self.folderlabel.setText('')
 
             self.playBtn.setEnabled(True)
+        else:
+            print('fuck')
 
     def play_video(self):
         if self.mediaPlayer.state() == QMediaPlayer.PlayingState:
