@@ -28,6 +28,10 @@ class Window(QWidget):
 
 
     def init_ui(self):
+        self.filenameOpened = ''
+        self.filenameFolder = ''
+        self.filenameMask = ''
+        self.filenameSaved = ''
 
         #create media player object
         self.mediaPlayer = QMediaPlayer(None, QMediaPlayer.VideoSurface)
@@ -35,15 +39,6 @@ class Window(QWidget):
         #create videowidget object
 
         videowidget = QVideoWidget()
-
-
-        #create open button
-        self.openBtn = QPushButton('Open Video')
-        self.openBtn.clicked.connect(self.open_file)
-
-        #create save button
-        self.saveBtn = QPushButton('Save Video as')
-        self.saveBtn.clicked.connect(self.save_file)
 
 
         #create button for playing
@@ -71,8 +66,6 @@ class Window(QWidget):
         self.hboxLayout.setContentsMargins(0, 0, 0, 0)
 
         #set widgets to the hbox layout
-        self.hboxLayout.addWidget(self.openBtn)
-        self.hboxLayout.addWidget(self.saveBtn)
         self.hboxLayout.addWidget(self.playBtn)
         self.hboxLayout.addWidget(self.slider)
 
@@ -85,6 +78,35 @@ class Window(QWidget):
         self.vboxLayout.addWidget(self.label)
 
 
+        self.BtnsLayout = QVBoxLayout()
+
+
+        # OpenBtn
+        self.openBtn = QPushButton('Open Video')
+        self.openBtn.clicked.connect(self.open_file)
+        
+        self.hboxLayout = QHBoxLayout()
+        self.hboxLayout.setContentsMargins(0, 0, 0, 0)
+
+        self.BtnsLayout.addWidget(self.openBtn)
+
+        # selectFolder
+        self.selectFolder = QPushButton('Select folder')
+        self.selectFolder.clicked.connect(self.select_folder)
+        self.BtnsLayout.addWidget(self.selectFolder)
+
+        # selectMask
+        self.selectMask = QPushButton('Select mask folder')
+        self.selectMask.clicked.connect(self.select_mask)
+        self.BtnsLayout.addWidget(self.selectMask)
+
+        # create save button
+        self.saveBtn = QPushButton('Save Video as')
+        self.saveBtn.clicked.connect(self.save_file)
+        self.BtnsLayout.addWidget(self.saveBtn)
+
+
+        self.vboxLayout.addLayout(self.BtnsLayout)
         self.setLayout(self.vboxLayout)
 
         self.mediaPlayer.setVideoOutput(videowidget)
@@ -99,21 +121,19 @@ class Window(QWidget):
 
     def open_file(self):
         self.filenameOpened, _ = QFileDialog.getOpenFileName(self, "Open Video")
-
         if self.filenameOpened != '':
             self.mediaPlayer.setMedia(QMediaContent(QUrl.fromLocalFile(self.filenameOpened)))
             self.playBtn.setEnabled(True)
 
     def save_file(self):
-        self.filename, _ = QFileDialog.getSaveFileName(self, "Open Video")
-        
-        #<Here might be some AI integrations>
-        shutil.copy2(self.filenameOpened, self.filename)
-        #</Here might be some AI integrations>
+        self.filenameSaved, _ = QFileDialog.getSaveFileName(self, "Open Video")
 
-        if self.filename != '':
+        if self.filenameOpened != '' and self.filenameSaved != '':
+            shutil.copy2(self.filenameOpened, self.filenameSaved)
             self.mediaPlayer.setMedia(QMediaContent(QUrl.fromLocalFile(self.filenameOpened)))
-            self.playBtn.setEnabled(True)
+            self.filenameOpened = ''
+            self.filenameFolder = ''
+            self.filenameMask = ''
 
 
     def play_video(self):
@@ -153,6 +173,13 @@ class Window(QWidget):
         self.playBtn.setEnabled(False)
         self.label.setText("Error: " + self.mediaPlayer.errorString())
 
+    def select_folder(self):
+        self.filenameFolder = QFileDialog.getExistingDirectory(self, "Select folder")
+        print(str(self.filenameFolder))
+
+    def select_mask(self):
+        self.filenameMask = QFileDialog.getExistingDirectory(self, "Select mask")
+        print(str(self.filenameMask))
 
 
 
