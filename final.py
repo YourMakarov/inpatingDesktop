@@ -121,6 +121,14 @@ class Window(QWidget):
         self.openlabel.setText('')
         self.openLayout.addWidget(self.openBtn)
         self.openLayout.addWidget(self.openlabel)
+
+        self.launchBtn = QPushButton('Launch process')
+        self.launchBtn.clicked.connect(self.launch)
+        self.launchBtn.setFixedSize(160, 60)
+        self.launchBtn.setMinimumSize(70, 40)
+        self.launchBtn.setStyleSheet(
+            "QPushButton {background-color: #D3D3D3; color: black; border-radius: 20px;  border: 2px groove gray;font: 10pt 'Source Sans Pro';border-style: circle;}" "QPushButton:pressed {background-color:rgb(119, 136, 153);}")
+
         self.BtnsLayout.addLayout(self.openLayout)
 
         self.openlabel.setStyleSheet('''
@@ -181,6 +189,7 @@ class Window(QWidget):
         self.savelabel = QLabel()
         self.savelabel.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Maximum)
         self.saveLayout.addWidget(self.savelabel)
+        self.saveLayout.addWidget(self.launchBtn)
 
         self.BtnsLayout.addLayout(self.saveLayout)
 
@@ -207,37 +216,8 @@ class Window(QWidget):
 
     def save_file(self):
         self.filenameFolderSaved = QFileDialog.getExistingDirectory(self, "Select folder with result")
-        print(self.filenameFolderSaved)
-        if self.filenameOpened != '' and self.filenameFolderSaved != '' and self.filenameMask != '':
-            # shutil.copy2(self.filenameOpened, self.filenameSaved)
-            # new:
-            ## process_video('/'.join(self.filenameOpened.split('/')[:-1]), self.filenameMask, self.filenameFolderSaved, self.filenameOpened.split('/')[-1])
-            #self.mediaPlayer.setMedia(QMediaContent(QUrl.fromLocalFile(self.filenameFolderSaved)))
-            self.filenameOpened = ''
-            self.filenameFolder = ''
-            self.filenameMask = ''
-            self.filenameFolderSaved = ''
+        self.savelabel.setText(self.filenameFolderSaved)
 
-            self.masklabel.setText('')
-            self.openlabel.setText('')
-
-            #self.playBtn.setEnabled(True)
-        elif self.filenameFolder != '' and self.filenameFolderSaved != '' and self.filenameMask != '':
-            # shutil.copy2(self.filenameOpened, self.filenameSaved)
-            # new:
-            ## process_video(self.filenameFolder, self.filenameMask, self.filenameFolderSaved)
-
-            self.filenameOpened = ''
-            self.filenameFolder = ''
-            self.filenameMask = ''
-            self.filenameFolderSaved = ''
-
-            self.masklabel.setText('')
-            self.folderlabel.setText('')
-
-            self.playBtn.setEnabled(True)
-        else:
-            print('fuck')
 
     def play_video(self):
         if self.mediaPlayer.state() == QMediaPlayer.PlayingState:
@@ -284,6 +264,38 @@ class Window(QWidget):
         self.filenameMask = QFileDialog.getExistingDirectory(self, "Select mask")
         if self.filenameMask != '':
             self.masklabel.setText(self.filenameMask)
+
+    def launch(self):
+        if self.filenameOpened != '' and self.filenameFolderSaved != '' and self.filenameMask != '':
+            # shutil.copy2(self.filenameOpened, self.filenameSaved)
+            # new:
+            ## process_video('/'.join(self.filenameOpened.split('/')[:-1]), self.filenameMask, self.filenameFolderSaved, self.filenameOpened.split('/')[-1])
+            # self.mediaPlayer.setMedia(QMediaContent(QUrl.fromLocalFile(self.filenameFolderSaved)))
+            self.filenameOpened = ''
+            self.filenameFolder = ''
+            self.filenameMask = ''
+            self.filenameFolderSaved = ''
+
+            self.masklabel.setText('')
+            self.openlabel.setText('')
+
+            # self.playBtn.setEnabled(True)
+        elif self.filenameFolder != '' and self.filenameFolderSaved != '' and self.filenameMask != '':
+            # shutil.copy2(self.filenameOpened, self.filenameSaved)
+            # new:
+            ## process_video(self.filenameFolder, self.filenameMask, self.filenameFolderSaved)
+
+            self.filenameOpened = ''
+            self.filenameFolder = ''
+            self.filenameMask = ''
+            self.filenameFolderSaved = ''
+
+            self.masklabel.setText('')
+            self.folderlabel.setText('')
+
+            self.playBtn.setEnabled(True)
+        else:
+            print('fuck')
 
 
 app = QApplication(sys.argv)
